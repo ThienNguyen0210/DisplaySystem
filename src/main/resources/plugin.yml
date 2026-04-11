@@ -1,0 +1,10 @@
+name: BetterTextDisplay
+version: 1.0-SNAPSHOT
+main: org.example.Main
+api-version: 1.20
+author: ThienNguyen0210
+commands:
+  btd:
+    description: Lệnh chính của BetterTextDisplay
+    permission: btd.admin
+    usage: /btd reload

@@ -1,0 +1,85 @@
+# Ví dụ về một Display thông tin người chơi
+# --- Các thẻ chức năng (Commands) ---
+# [ai] <tên>: Bắt đầu chat với AI theo file trong thư mục AI/
+# [message] <text>: Gửi tin nhắn cho người chơi (Hỗ trợ PAPI)
+# [console] <lệnh>: Chạy lệnh từ Console
+# [op] <lệnh>: Chạy lệnh với quyền OP
+# [money] <số>: Cộng (+) hoặc trừ (-) tiền (Yêu cầu Vault)
+# [call] <key>: Triệu hồi một Content khác ngay lập tức
+# [update] <key>: Đổi nội dung bảng hiện tại sang Key mới (Giữ nguyên Background)
+# [update-bg] <key>: Đổi nội dung và đổi luôn màu nền theo Key mới
+# [update-all] <key>: Đổi toàn bộ thuộc tính sang Key mới
+# [delay] <ticks>: Chờ một khoảng thời gian trước khi chạy lệnh tiếp theo
+# [close]: Đóng bảng hiển thị ngay lập tức
+# [refresh]: Reset lại thời gian duration (làm mới bảng)
+# [ban] <key> <thời_gian>: Cấm người chơi triệu hồi key này trong X giây
+# ==========================================================
+#                  BetterTextdisplay Content Config
+# ==========================================================
+# Cấu trúc:
+# <key_name>: Tên dùng để gọi (Ví dụ: chat "-gemini_npc")
+#   text: Danh sách dòng chữ hiển thị (TextDisplay)
+#   scale: Kích thước của bảng chữ
+#   duration: Thời gian tồn tại (giây) trước khi tự biến mất
+#   permission: Quyền để có thể triệu hồi/tương tác (Thêm ! để phủ định)
+#   cooldown: Thời gian chờ giữa 2 lần triệu hồi (giây)
+#   message-on-spawn: Tin nhắn gửi cho người chơi khi bảng xuất hiện
+#   interact: Các sự kiện click (right_click, left_click, shift_right_click, ...)
+
+# vô game chat -Profile để thấy điê kì diệu:v
+Profile:
+  text:
+    - "&e&lTHÔNG TIN CỦA BẠN"
+    - "&fTên: &a%player_name%"
+    - "&fMáu: &c%player_health%/%player_max_health%"
+    - "&fSố dư: &6%vault_eco_balance_fixed% $"
+  scale: 2.5
+  background-color: "#2e2e2e"
+  opacity: 150 #trong suốt
+  duration: 15 # Tự xóa sau 15 giây
+
+  # Lệnh chạy ngay khi display vừa xuất hiện
+  message-on-spawn:
+    - "[message] &aBạn vừa mở bảng thông tin cá nhân!"
+    - "[console] effect give %player_name% minecraft:speed 5 1"
+
+  # Cấu hình tương tác khi click vào Display
+  interact:
+    right_click:
+      commands:
+        - "[message] &eĐang cập nhật lại thông tin..."
+        - "[refresh]" # Làm mới thời gian tồn tại (duration)
+        - "[update] Profile" # Cập nhật lại nội dung mới nhất
+    left_click:
+      commands:
+        - "[close]" # Đóng display ngay lập tức
+
+# Ví dụ về NPC AI
+ShopNPC:
+  text:
+    - "&b&lCÔ TIÊN XANH"
+    - "&fHãy chat với tôi để mua đồ!"
+  scale: 2.0
+  background-color: "#03fcf4"
+  interact:
+    right_click:
+      commands:
+        - "[ai] Gemini" # Kết nối với AI Gemini.yml
+        - "[message] &b[AI] &fĐã kết nối! Gõ &ccancel &fđể thoát."
+
+# Ví dụ về Display có điều kiện
+AdminPanel:
+  permission: "server.admin" # Chỉ admin mới mở được
+  text:
+    - "&c&lBẢNG ĐIỀU KHIỂN"
+    - "&7Click để nhận 1000$"
+  interact:
+    right_click:
+      commands:
+        - "[money] 1000"
+        - "[message] &aBạn nhận được 1000$!"
+  conditions:
+    input1: "%placeholder2%"
+    input2: "%placeholder1%"
+    type: "number" #char kí tự
+    math: ">=" # toán tử so sánh

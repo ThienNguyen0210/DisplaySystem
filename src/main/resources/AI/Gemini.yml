@@ -1,0 +1,28 @@
+Exactly: 70        # Độ tương đồng tối thiểu để khớp input (0-100%)
+
+Chat:
+  Input:
+    chao:
+      - "chào"
+      - "hello"
+      - "hi"
+      - "xin chao"
+    shop:
+      - "shop"
+      - "cửa hàng"
+      - "mua đồ"
+    vip:
+      - "vip"
+      - "quyền vip"
+      - "lợi ích vip"
+
+  Output:
+    chao:
+      - "Chào bạn! Có mình giúp gì không? 😊"
+      - "Hello! Bạn khỏe không?"
+    shop:
+      - "Bạn muốn mở shop phải không? Gõ &a-shop &ftrong chat nhé!"
+      - "[message] &bDùng lệnh &a-shop &fđể mở cửa hàng!"
+    vip:
+      - "Thông tin VIP: &6/vip"
+      - "[WAIT:give vip %player_name% 30d] Bạn muốn nhận thử VIP 30 ngày không?"

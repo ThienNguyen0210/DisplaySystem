@@ -1,0 +1,32 @@
+# BetterTextDisplay - Cấu hình chính
+# permission : btd.admin
+AI-Config:
+  - "Gemini.yml"
+
+Settings:
+  Tools:
+    yaw: true     # Cho phép công cụ di chuyển lưu lại góc xoay ngang (yaw)
+    pitch: true   # Cho phép công cụ di chuyển lưu lại góc xoay dọc (pitch)
+
+# Cấu hình animation khi hiển thị TextDisplay tạm thời (lệnh -key)
+settings:
+  enable-animation: true
+  animation-ticks: 5
+  animation-pivot: "MID"  # MID / TOP / BOT - điểm pivot khi scale animation
+
+# Cấu hình từ khóa xác nhận cho AI (khi có lệnh [WAIT:])
+AI-Settings:
+  Keywords:
+    Yes:
+      - "có"
+      - "yes"
+      - "đồng ý"
+      - "ok"
+      - "được"
+      - "chấp nhận"
+    No:
+      - "không"
+      - "no"
+      - "hủy"
+      - "từ chối"
+      - "cancel"

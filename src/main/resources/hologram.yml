@@ -1,0 +1,49 @@
+Holograms:
+  WelcomeSpawn:
+    location: "world, 100.5, 65, 100.5" # world, x, y, z
+    yaw: 0.0
+    pitch: 0.0
+    lines:
+      - "&a&lCHÀO MỪNG ĐẾN VỚI SERVER"
+      - "&fNgười chơi trực tuyến: &e%server_online%"
+    scale: 1.5
+    background: "#000000"
+    opacity: 100
+    look-player: true # Luôn quay về phía người chơi
+    up-down: true # Quay cả trục dọc
+
+    # Tương tác đổi nội dung Hologram (Update tạm thời)
+    interact:
+      width: 4.0 # Độ rộng hitbox
+      height: 1.0 # Độ cao hitbox
+      offset-y: -55.5
+      right-click:
+        # [update] <KeyMới> <ThờiGianReset>
+        - "[update] ServerInfo 10"
+      left-click:
+        - "[message] &eBạn đã click vào Hologram Chào Mừng!"
+
+  # Template dùng để update nội dung cho WelcomeSpawn
+  ServerInfo:
+    is-template: true # Không tự động spawn khi load
+    lines:
+      - "&b&lTHÔNG TIN SERVER"
+      - "&fRam: &7%server_ram_used%/%server_ram_max%"
+      - "&fTPS: &a%server_tps_1%"
+    scale: 1.2
+    background: "#1a1a1a"
+
+LeaderBoards:
+  TopMoney:
+    location: "world, 14.307, 69.807, -19.285"
+    placeholder: "%vault_eco_balance%" # Placeholder gốc
+    header: '&6&l--- TOP ĐẠI GIA ---'
+    max-ranks: 5
+    lines-format: '&7#%rank% &b%player% &f- &a$%value%'
+    scale: 1.8
+    background: '#000000'
+    opacity: 180
+
+    # Bạn cũng có thể thêm các thuộc tính hiển thị giống Hologram:
+    look-player: true  # Xoay theo người chơi
+    up-down: false     # Xoay theo trục dọc
