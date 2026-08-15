@@ -65,7 +65,7 @@ public class LeaderboardDatabase {
         });
     }
 
-    // Lấy top N player theo tiền (dùng cho leaderboard)
+    
     public List<LeaderboardEntry> getTopMoney(int limit) {
         List<LeaderboardEntry> top = new ArrayList<>();
         String sql = "SELECT name, money FROM player_money ORDER BY money DESC LIMIT ?;";
@@ -83,7 +83,7 @@ public class LeaderboardDatabase {
         return top;
     }
 
-    // Cập nhật dữ liệu khi player join (nếu dùng PlaceholderAPI + Vault)
+    
     public void updateOnJoin(Player player) {
         if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) return;
 
@@ -91,34 +91,34 @@ public class LeaderboardDatabase {
             String placeholder = "%vault_eco_balance%";
             String valueStr = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder);
 
-            // Làm sạch số tiền (loại bỏ dấu phẩy, chấm, ký tự tiền tệ...)
+            
             String cleaned = valueStr.replaceAll("[^0-9.]", "");
             double money = 0.0;
             try {
                 money = Double.parseDouble(cleaned);
             } catch (NumberFormatException e) {
-                // Nếu parse lỗi, thử placeholder_fixed
+                
                 String fixed = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, "%vault_eco_balance_fixed%");
                 cleaned = fixed.replaceAll("[^0-9.]", "");
                 try {
                     money = Double.parseDouble(cleaned);
                 } catch (NumberFormatException ignored) {
-                    return; // Bỏ qua nếu vẫn lỗi
+                    return; 
                 }
             }
 
-            // Cập nhật vào DB
+            
             updatePlayerMoney(player, money);
         });
     }
 
-    // Task tự động cập nhật toàn bộ online players mỗi 5 phút (đề phòng tiền thay đổi ngoài join)
+    
     private void startAutoUpdateTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                updateOnJoin(p); // Tái sử dụng hàm
+                updateOnJoin(p); 
             }
-        }, 20L * 60 * 5, 20L * 60 * 5); // Mỗi 5 phút
+        }, 20L * 60 * 5, 20L * 60 * 5); 
     }
 
     public void closeConnection() {

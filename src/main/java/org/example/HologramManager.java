@@ -12,7 +12,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
-import org.bukkit.World; // Thêm import này
+import org.bukkit.World; 
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -88,9 +88,7 @@ public class HologramManager {
         }
     }
 
-    /**
-     * Spawn hologram bình thường từ config (dùng cho world chính)
-     */
+    
     public void spawnHologram(String key, String fullPath) {
         ConfigurationSection sec = plugin.getConfigs().getHologram().getConfigurationSection(fullPath);
         if (sec == null) {
@@ -111,22 +109,18 @@ public class HologramManager {
             return;
         }
 
-        // Spawn với location gốc từ config
+        
         spawnHologramEntity(key, fullPath, sec, baseLoc);
     }
 
-    /**
-     * Spawn hologram vào một world cụ thể (dùng cho instance dungeon)
-     * @param key Tên hologram (ví dụ: "boss_timer")
-     * @param targetWorld World instance cần spawn vào
-     */
+    
     public void spawnHologramInWorld(String key, World targetWorld) {
         if (targetWorld == null) {
             plugin.getLogger().warning("§c[BTD] Không thể spawn hologram '" + key + "' vào world null!");
             return;
         }
 
-        String fullPath = "Holograms." + key; // Giả sử chỉ dùng Holograms, bạn có thể mở rộng cho LeaderBoards nếu cần
+        String fullPath = "Holograms." + key; 
         ConfigurationSection sec = plugin.getConfigs().getHologram().getConfigurationSection(fullPath);
         if (sec == null) {
             plugin.getLogger().warning("§c[BTD] Không tìm thấy hologram config cho: " + key + " để spawn vào instance.");
@@ -145,15 +139,12 @@ public class HologramManager {
             return;
         }
 
-        // Đổi world thành instance, giữ nguyên tọa độ + yaw/pitch
+        
         Location instanceLoc = new Location(targetWorld, baseLoc.getX(), baseLoc.getY(), baseLoc.getZ(), baseLoc.getYaw(), baseLoc.getPitch());
 
         spawnHologramEntity(key + "_instance_" + targetWorld.getName(), fullPath, sec, instanceLoc);
     }
 
-    /**
-     * Hàm chung spawn entity (TextDisplay + Interaction)
-     */
     private void spawnHologramEntity(String storageKey, String fullPath, ConfigurationSection sec, Location loc) {
         float yaw = (float) sec.getDouble("yaw", loc.getYaw());
         float pitch = (float) sec.getDouble("pitch", loc.getPitch());
@@ -161,6 +152,7 @@ public class HologramManager {
         loc.setPitch(pitch);
 
         TextDisplay td = loc.getWorld().spawn(loc, TextDisplay.class);
+        td.setPersistent(false); 
 
         if (fullPath.startsWith("LeaderBoards")) {
             td.setText(String.join("\n", buildLeaderboardLines(sec)));
@@ -173,7 +165,7 @@ public class HologramManager {
         td.addScoreboardTag("BTD_HOLO_" + storageKey);
         activeHolograms.put(storageKey, td.getUniqueId());
 
-        // Spawn Interaction nếu có
+        
         if (sec.contains("interact")) {
             float width = (float) sec.getDouble("interact.width", 1.0);
             float height = (float) sec.getDouble("interact.height", 1.0);
@@ -184,6 +176,7 @@ public class HologramManager {
             Location interLoc = loc.clone().add(0, offsetY, 0).add(direction.multiply(offsetForward));
 
             Interaction interaction = loc.getWorld().spawn(interLoc, Interaction.class);
+            interaction.setPersistent(false); 
             interaction.setInteractionWidth(width);
             interaction.setInteractionHeight(height);
             interaction.setResponsive(true);
@@ -196,10 +189,8 @@ public class HologramManager {
         }
     }
 
-    // Các hàm còn lại giữ nguyên 100% (buildLeaderboardLines, updateHologram, applyStyles, removeAll, parseLocation, parseColor...)
 
     private List<String> buildLeaderboardLines(ConfigurationSection sec) {
-        // ... (giữ nguyên code cũ của bạn)
         List<String> finalLines = new ArrayList<>();
         String header = sec.getString("header");
         if (header != null && !header.isEmpty()) finalLines.add(header.replace("&", "§"));
@@ -231,7 +222,7 @@ public class HologramManager {
     }
 
     public void updateHologram(String holoKey, String newContentKey, int durationSeconds) {
-        // ... (giữ nguyên code cũ)
+        
         UUID tdUuid = activeHolograms.get(holoKey);
         if (tdUuid == null) return;
         Entity tdEnt = Bukkit.getEntity(tdUuid);

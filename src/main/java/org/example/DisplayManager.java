@@ -33,13 +33,13 @@ public class DisplayManager {
 
         TextDisplay td = player.getWorld().spawn(loc, TextDisplay.class);
 
-        // Render nội dung văn bản
+        
         td.setText(setupTextContent(player, section));
         td.setSeeThrough(true);
         td.setBillboard(TextDisplay.Billboard.CENTER);
         td.setBackgroundColor(parseColor(section.getString("background-color", "#03fcf4"), section.getInt("opacity", 120)));
 
-        // Xử lý animation
+        
         boolean useAnimation = plugin.getConfig().getBoolean("settings.enable-animation", true);
         int animTicks = useAnimation ? plugin.getConfig().getInt("settings.animation-ticks", 5) : 0;
         String pivot = plugin.getConfig().getString("settings.animation-pivot", "MID").toUpperCase();
@@ -63,10 +63,10 @@ public class DisplayManager {
         inter.setMetadata("BTD_DISPLAY", new FixedMetadataValue(plugin, td.getUniqueId().toString()));
 
         linkedInteractions.put(td.getUniqueId(), inter);
-        // === XỬ LÝ MESSAGE-ON-SPAWN (khi display vừa được tạo) ===
+        
         List<String> onSpawnCommands = section.getStringList("message-on-spawn");
         if (onSpawnCommands.isEmpty()) {
-            onSpawnCommands = section.getStringList("mess-on-spawn"); // hỗ trợ tên cũ nếu có
+            onSpawnCommands = section.getStringList("mess-on-spawn"); 
         }
 
         if (!onSpawnCommands.isEmpty()) {
@@ -84,7 +84,7 @@ public class DisplayManager {
 
                 String lowerCmd = processedCmd.toLowerCase().trim();
 
-                // Hỗ trợ các lệnh phổ biến
+                
                 if (lowerCmd.startsWith("[message]")) {
                     player.sendMessage(processedCmd.substring(9).trim().replace("&", "§"));
                 }
@@ -95,18 +95,18 @@ public class DisplayManager {
                         lowerCmd.startsWith("[update") ||
                         lowerCmd.startsWith("[close]") ||
                         lowerCmd.startsWith("[refresh]")) {
-                    // Dùng hàm execute() mạnh mẽ từ EventListener để xử lý tất cả lệnh nguy hiểm
+                    
                     if (plugin.getEventListener() != null) {
                         plugin.getEventListener().execute(player, inter, processedCmd);
                     }
                 }
                 else {
-                    // Nếu không có tag nào → coi như tin nhắn thường
+                    
                     player.sendMessage(processedCmd.replace("&", "§"));
                 }
             }
         }
-        // === KẾT THÚC XỬ LÝ MESSAGE-ON-SPAWN ===
+        
         scheduleRemoval(td, section.getInt("duration", 10));
     }
 
@@ -176,8 +176,8 @@ public class DisplayManager {
         if (td == null) return;
         UUID tdUuid = td.getUniqueId();
 
-        // TỰ ĐỘNG THOÁT AI: Tìm và xóa session AI liên quan đến Display này
-        // Chúng ta gọi hàm từ EventListener thông qua Main
+        
+        
         if (plugin.getEventListener() != null) {
             plugin.getEventListener().removeAISessionByDisplay(tdUuid);
         }

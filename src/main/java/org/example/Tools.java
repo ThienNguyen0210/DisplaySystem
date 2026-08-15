@@ -1,4 +1,4 @@
-// Fixed Tools.java - Ensured it can move both holograms and leaderboards by using consistent tags/metadata.
+
 
 package org.example;
 
@@ -47,7 +47,7 @@ public class Tools implements Listener {
         Player p = e.getPlayer();
         ItemStack item = p.getInventory().getItemInMainHand();
 
-        // Kiểm tra gậy
+        
         if (item.getType() != Material.STICK || !item.hasItemMeta() ||
                 !item.getItemMeta().getDisplayName().contains("Hologram Mover")) return;
 
@@ -61,14 +61,14 @@ public class Tools implements Listener {
         org.bukkit.entity.Entity target = e.getRightClicked();
         String key = null;
 
-        // TRƯỜNG HỢP 1: Click vào TextDisplay
+        
         if (target instanceof TextDisplay td) {
             key = td.getScoreboardTags().stream()
                     .filter(tag -> tag.startsWith("BTD_HOLO_"))
                     .map(tag -> tag.replace("BTD_HOLO_", ""))
                     .findFirst().orElse(null);
         }
-        // TRƯỜNG HỢP 2: Click vào Interaction (Hitbox)
+        
         else if (target instanceof org.bukkit.entity.Interaction) {
             if (target.hasMetadata("BTD_HOLO_KEY")) {
                 key = target.getMetadata("BTD_HOLO_KEY").get(0).asString();
@@ -77,7 +77,7 @@ public class Tools implements Listener {
 
         if (key != null) {
             dragging.put(p.getUniqueId(), key);
-            // Quan trọng: Lưu vị trí của TextDisplay thực tế thay vì vị trí Interaction
+            
             UUID tdUuid = plugin.getHologramManager().getActiveHolograms().get(key);
             org.bukkit.entity.Entity tdEnt = Bukkit.getEntity(tdUuid);
             originalLocs.put(p.getUniqueId(), (tdEnt != null ? tdEnt.getLocation() : target.getLocation()).clone());
@@ -88,7 +88,7 @@ public class Tools implements Listener {
     @EventHandler
     public void onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        // Nếu đang dắt Hologram và click chuột phải vào không khí hoặc khối
+        
         if (dragging.containsKey(p.getUniqueId()) &&
                 (e.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR ||
                         e.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK)) {
@@ -98,7 +98,7 @@ public class Tools implements Listener {
                     item.getItemMeta().getDisplayName().contains("Hologram Mover")) {
 
                 e.setCancelled(true);
-                stopDragging(p, true); // Đặt xuống và lưu
+                stopDragging(p, true); 
             }
         }
     }
@@ -122,29 +122,29 @@ public class Tools implements Listener {
 
         if (save && ent != null) {
             Location n = ent.getLocation();
-            // Kiểm tra xem key thuộc Holograms hay LeaderBoards
+            
             String sectionPath = plugin.getConfigs().getHologram().contains("Holograms." + key) ? "Holograms." + key : "LeaderBoards." + key;
             ConfigurationSection holoSec = plugin.getConfigs().getHologram().getConfigurationSection(sectionPath);
 
-            // 1. Luôn luôn lưu tọa độ XYZ
+            
             String locStr = String.format("%s,%f,%f,%f", n.getWorld().getName(), n.getX(), n.getY(), n.getZ());
             holoSec.set("location", locStr);
 
-            // 2. Đọc cài đặt từ config.yml (Dùng plugin.getConfig())
-            boolean canUpdateYaw = plugin.getConfig().getBoolean("Settings.Tools.paw", false); // Note: Có lẽ là lỗi đánh máy, nên là "yaw"
+            
+            boolean canUpdateYaw = plugin.getConfig().getBoolean("Settings.Tools.paw", false); 
             boolean canUpdatePitch = plugin.getConfig().getBoolean("Settings.Tools.pitch", false);
 
-            // 3. Xử lý lưu Yaw (Xoay ngang)
+            
             if (canUpdateYaw) {
                 holoSec.set("yaw", (double) n.getYaw());
             }
 
-            // 4. Xử lý lưu Pitch (Xoay dọc)
+            
             if (canUpdatePitch) {
                 holoSec.set("pitch", (double) n.getPitch());
             }
 
-            // Lưu file và thông báo
+            
             plugin.getConfigs().saveHologram();
             p.sendMessage("§e§l[BTD] §aĐã đặt Hologram!");
             if (canUpdateYaw || canUpdatePitch) {
@@ -161,14 +161,14 @@ public class Tools implements Listener {
         Player p = e.getPlayer();
         if (!dragging.containsKey(p.getUniqueId())) return;
 
-        // Nếu đang cầm gậy và click chuột phải (vào không khí hoặc block)
+        
         if (e.getAction().name().contains("RIGHT_CLICK")) {
             ItemStack item = p.getInventory().getItemInMainHand();
             if (item.getType() == Material.STICK && item.hasItemMeta() &&
                     item.getItemMeta().getDisplayName().contains("Hologram Mover")) {
 
                 e.setCancelled(true);
-                stopDragging(p, true); // Xác nhận đặt và lưu Yaw/Pitch
+                stopDragging(p, true); 
             }
         }
     }
@@ -185,12 +185,12 @@ public class Tools implements Listener {
 
                     Entity ent = Bukkit.getEntity(tdUuid);
                     if (ent != null) {
-                        // Lấy vị trí cách người chơi 3 block theo hướng nhìn
+                        
                         Location targetLoc = p.getTargetBlock(null, 3).getLocation().add(0.5, 1.2, 0.5);
 
-                        // Cập nhật Yaw/Pitch để đối diện người chơi
+                        
                         targetLoc.setYaw(p.getLocation().getYaw() + 180);
-                        targetLoc.setPitch(p.getLocation().getPitch() * -1); // Đảo ngược pitch để nhìn thẳng mặt
+                        targetLoc.setPitch(p.getLocation().getPitch() * -1); 
 
                         ent.teleport(targetLoc);
                     }

@@ -12,7 +12,7 @@ public class AIManager {
     public String getResponse(YamlConfiguration config, String userInput) {
         if (config == null) return null;
 
-        // Lấy ngưỡng chính xác (mặc định 60%)
+        
         double threshold = config.getDouble("Exactly", 60.0) / 100.0;
         ConfigurationSection chatSec = config.getConfigurationSection("Chat");
         if (chatSec == null) return null;
@@ -34,7 +34,7 @@ public class AIManager {
         return null;
     }
 
-    // Thuật toán Levenshtein tính độ tương đồng 0.0 -> 1.0
+    
     private double getSimilarity(String s1, String s2) {
         String longer = s1.toLowerCase(), shorter = s2.toLowerCase();
         if (s1.length() < s2.length()) { longer = s2; shorter = s1; }

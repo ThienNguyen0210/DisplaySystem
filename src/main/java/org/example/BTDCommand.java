@@ -1,4 +1,4 @@
-// Fixed BTDCommand.java - Added TabCompleter support + /btd remove <name> to delete hologram/leaderboard
+
 
 package org.example;
 
@@ -25,7 +25,7 @@ public class BTDCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        // Kiểm tra quyền hạn
+        
         if (!sender.hasPermission("btd.admin")) {
             sender.sendMessage("§cBạn không có quyền thực hiện lệnh này!");
             return true;
@@ -103,7 +103,7 @@ public class BTDCommand implements CommandExecutor, TabCompleter {
         sec.set("scale", 1.0);
         sec.set("interact.commands", Arrays.asList("[message] &bBạn đã click vào hologram %player_name%"));
         plugin.getConfigs().saveHologram();
-        plugin.getHologramManager().loadAllHolograms(); // Reload để spawn ngay
+        plugin.getHologramManager().loadAllHolograms(); 
         p.sendMessage("§a[BTD] Đã tạo hologram §f" + name + " §atại vị trí của bạn.");
     }
 
@@ -150,10 +150,10 @@ public class BTDCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        // Xóa thực thể trước (nếu đang tồn tại)
-        plugin.getHologramManager().removeAll(); // Đơn giản nhất: xóa hết rồi reload (vì ít hologram)
+        
+        plugin.getHologramManager().removeAll(); 
 
-        // Xóa khỏi config
+        
         hologramConfig.set(sectionPath, null);
         plugin.getConfigs().saveHologram();
         plugin.getHologramManager().loadAllHolograms();
@@ -170,7 +170,7 @@ public class BTDCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("§6/btd give tools §f- Nhận gậy di chuyển hologram");
     }
 
-    // ==================== TAB COMPLETER ====================
+    
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!sender.hasPermission("btd.admin")) return null;
@@ -178,7 +178,7 @@ public class BTDCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            // Gợi ý subcommand
+            
             completions.addAll(Arrays.asList("reload", "create", "movehere", "remove", "give"));
             return filterCompletions(completions, args[0]);
         }
@@ -192,7 +192,7 @@ public class BTDCommand implements CommandExecutor, TabCompleter {
             }
 
             if (sub.equals("movehere") || sub.equals("remove") || sub.equals("create")) {
-                // Gợi ý tên hologram + leaderboard
+                
                 ConfigurationSection holoSec = plugin.getConfigs().getHologram().getConfigurationSection("Holograms");
                 if (holoSec != null) {
                     for (String key : holoSec.getKeys(false)) {

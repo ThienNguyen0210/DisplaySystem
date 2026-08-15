@@ -9,7 +9,7 @@ import java.util.Map;
 public class ConfigManager {
     private final Main plugin;
     private FileConfiguration contentConfig;
-    private FileConfiguration hologramConfig; // Thêm dòng này
+    private FileConfiguration hologramConfig; 
     private final Map<String, YamlConfiguration> aiConfigs = new HashMap<>();
 
     public ConfigManager(Main plugin) {
@@ -20,18 +20,18 @@ public class ConfigManager {
     public void reloadConfigs() {
         plugin.reloadConfig();
 
-        // Load content.yml
+        
         File contentFile = new File(plugin.getDataFolder(), "content.yml");
         if (!contentFile.exists()) plugin.saveResource("content.yml", false);
         contentConfig = YamlConfiguration.loadConfiguration(contentFile);
 
-        // --- THÊM: Load hologram.yml ---
+        
         File holoFile = new File(plugin.getDataFolder(), "hologram.yml");
         if (!holoFile.exists()) plugin.saveResource("hologram.yml", false);
         hologramConfig = YamlConfiguration.loadConfiguration(holoFile);
-        // ------------------------------
+        
 
-        // Load folder AI
+        
         aiConfigs.clear();
         File aiFolder = new File(plugin.getDataFolder(), "AI");
         for (String fileName : plugin.getConfig().getStringList("AI-Config")) {
@@ -52,7 +52,7 @@ public class ConfigManager {
     }
     public FileConfiguration getContent() { return contentConfig; }
 
-    // Thêm Getter cho Hologram
+    
     public FileConfiguration getHologram() { return hologramConfig; }
 
     public YamlConfiguration getAIConfig(String name) { return aiConfigs.get(name); }

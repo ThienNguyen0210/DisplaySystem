@@ -21,9 +21,9 @@ public class EventListener implements Listener {
     private final Main plugin;
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
 
-    // Lưu trữ người chơi đang chat với AI nào và Display nào
+    
     private final Map<UUID, AISession> aiSessions = new HashMap<>();
-    // Lưu trữ hành động chờ xác nhận (WAIT)
+    
     private final Map<UUID, String> pendingActions = new HashMap<>();
     private final AIManager aiManager = new AIManager();
 
@@ -79,10 +79,10 @@ public class EventListener implements Listener {
             return;
         }
 
-        // Chuyển toàn bộ việc xử lý AI sang luồng chính (Main Thread)
+        
         Bukkit.getScheduler().runTask(plugin, () -> {
 
-            // 1. XỬ LÝ XÁC NHẬN (YES/NO)
+            
             if (pendingActions.containsKey(p.getUniqueId())) {
                 String lowMsg = msg.toLowerCase();
                 List<String> yesWords = plugin.getConfig().getStringList("AI-Settings.Keywords.Yes");
@@ -106,7 +106,7 @@ public class EventListener implements Listener {
                     }
                     execute(p, inter, cmdWait);
                     plugin.getDisplayManager().updateAIText(p, session.displayUuid, "§a✔ §fĐã thực hiện yêu cầu!");
-                    return; // Dừng xử lý tiếp
+                    return; 
                 } else if (isNo) {
                     pendingActions.remove(p.getUniqueId());
                     plugin.getDisplayManager().updateAIText(p, session.displayUuid, "§c✘ §fĐã hủy yêu cầu.");
@@ -114,7 +114,7 @@ public class EventListener implements Listener {
                 }
             }
 
-            // 2. XỬ LÝ PHẢN HỒI AI - CHỈ THỰC THI KHI CÓ [WAIT:]
+            
             String response = aiManager.getResponse(aiConfig, msg);
 
             if (response != null) {
@@ -122,7 +122,7 @@ public class EventListener implements Listener {
                 String textToDisplay = rawResponse;
                 String cmdToWait = null;
 
-                // Kiểm tra có [WAIT:] không → nếu có thì tách ra để chờ xác nhận
+                
                 if (rawResponse.contains("[WAIT:")) {
                     int start = rawResponse.indexOf("[WAIT:");
                     int end = rawResponse.indexOf("]", start);
@@ -130,23 +130,23 @@ public class EventListener implements Listener {
                         cmdToWait = rawResponse.substring(start + 6, end).trim();
                         textToDisplay = rawResponse.replace(rawResponse.substring(start, end + 1), "").trim();
 
-                        // Lưu lệnh chờ xác nhận (cơ chế pending cũ)
+                        
                         pendingActions.put(p.getUniqueId(), cmdToWait);
 
-                        // Thông báo đang chờ xác nhận
+                        
                         plugin.getDisplayManager().updateAIText(p, session.displayUuid,
                                 textToDisplay.replace("&", "§") + "\n§e§l↳ Gõ 'có' hoặc 'yes' để xác nhận!");
                     }
                 } else {
-                    // Không có [WAIT:] → chỉ hiển thị text, KHÔNG thực thi lệnh gì cả
+                    
                     textToDisplay = rawResponse;
                 }
 
-                // Luôn cập nhật text hiển thị
+                
                 plugin.getDisplayManager().updateAIText(p, session.displayUuid, textToDisplay.replace("&", "§"));
 
-                // === CHỈ THỰC THI KHI NGƯỜI CHƠI XÁC NHẬN YES (đã xử lý ở phần trên cùng của hàm) ===
-                // Không làm gì thêm ở đây cả → an toàn 100%
+                
+                
 
             } else {
                 p.sendMessage("§b[" + session.aiName + "] §fTôi không hiểu ý bạn...");
@@ -206,7 +206,7 @@ public class EventListener implements Listener {
             return;
         }
 
-        // Các thẻ yêu cầu Interaction (Update/Refresh/Close)
+        
         if (inter != null) {
             if (lowerCmd.startsWith("[update-all]")) { handleUpdateAction(p, inter, finalCmd.substring(12).trim(), true); }
             else if (lowerCmd.startsWith("[update-bg]")) { handleUpdateAction(p, inter, finalCmd.substring(11).trim(), true); }
@@ -342,25 +342,25 @@ public class EventListener implements Listener {
         if (inter == null || !inter.hasMetadata("BTD_DISPLAY") || inter.getMetadata("BTD_DISPLAY").isEmpty()) return;
         plugin.getDisplayManager().refreshDuration(UUID.fromString(inter.getMetadata("BTD_DISPLAY").get(0).asString()));
     }
-    // --- XỬ LÝ CHUỘT PHẢI (Interact) ---
+    
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent e) {
         if (!(e.getRightClicked() instanceof Interaction inter)) return;
 
-        // Kiểm tra Metadata đồng nhất (BTD_HOLO_KEY)
+        
         if (inter.hasMetadata("BTD_HOLO_KEY")) {
             handleHoloClick(e.getPlayer(), inter, "right-click");
         }
     }
 
-    // --- XỬ LÝ CHUỘT TRÁI (Attack/Damage) ---
+    
     @EventHandler
     public void onLeftClick(EntityDamageByEntityEvent e) {
         if (!(e.getDamager() instanceof Player p)) return;
         if (!(e.getEntity() instanceof Interaction inter)) return;
 
         if (inter.hasMetadata("BTD_HOLO_KEY")) {
-            e.setCancelled(true); // Hủy sát thương thực thể
+            e.setCancelled(true); 
             handleHoloClick(p, inter, "left-click");
         }
     }
@@ -368,9 +368,9 @@ public class EventListener implements Listener {
     private void handleHoloClick(Player p, Interaction inter, String type) {
         if (!inter.hasMetadata("BTD_HOLO_KEY")) return;
 
-        // Key hiện tại (có thể là test, notice, notice1...)
+        
         String currentKey = inter.getMetadata("BTD_HOLO_KEY").get(0).asString();
-        // Key gốc (luôn luôn là test)
+        
         String parentKey = inter.getMetadata("BTD_HOLO_PARENT").get(0).asString();
 
         ConfigurationSection sec = plugin.getConfigs().getHologram().getConfigurationSection("Holograms." + currentKey + ".interact");
@@ -385,7 +385,7 @@ public class EventListener implements Listener {
                 String newContentKey = parts[0];
                 int duration = (parts.length > 1) ? Integer.parseInt(parts[1]) : 0;
 
-                // QUAN TRỌNG: Cập nhật dựa trên parentKey (test)
+                
                 plugin.getHologramManager().updateHologram(parentKey, newContentKey, duration);
             } else {
                 execute(p, null, finalCmd);
@@ -403,8 +403,8 @@ public class EventListener implements Listener {
                 String newContentKey = parts[0];
                 int duration = (parts.length > 1) ? Integer.parseInt(parts[1]) : 0;
 
-                // Tìm holoKey gốc nếu currentHoloKey đang là một template
-                // (Hoặc đơn giản là truyền holoKey từ Metadata vào đây)
+                
+                
                 plugin.getHologramManager().updateHologram(currentHoloKey, newContentKey, duration);
                 continue;
             }
